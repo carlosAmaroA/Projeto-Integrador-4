@@ -29,16 +29,16 @@ Este projeto utiliza dados genômicos e clínicos de câncer de mama para **dese
 
 #### Windows
 
-   >> python -m venv venv
-   >> venv\Scripts\Activate
-   >> pip install -r requirements.txt
+   - python -m venv venv
+   - venv\Scripts\Activate
+   - pip install -r requirements.txt
 
 
 #### MacOs/Linux
 
-   >> python -m venv venv
-   >> source venv/Scripts/Activate
-   >> pip install -r requirements.txt
+   - python -m venv venv
+   - source venv/Scripts/Activate
+   - pip install -r requirements.txt
    
 
  **Observação:** Execute o codigo **a partir da raiz do projeto**, onde está localizado o arquivo `requirements.txt`
