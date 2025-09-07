@@ -28,33 +28,17 @@ Este projeto utiliza dados genômicos e clínicos de câncer de mama para **dese
 ## Instalação
 
 #### Windows
-   <div style="
-    background-color: #111111;
-    color: #ffffffff;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 16px;
-    padding: 10px;
-    border-radius: 4px;
-    width: fit-content;
-    white-space: pre-line;
-">>> python -m venv venv
->> venv\Scripts\Activate
->> pip install -r requirements.txt
-</div>
+
+   >> python -m venv venv
+   >> venv\Scripts\Activate
+   >> pip install -r requirements.txt
+
 
 #### MacOs/Linux
-   <div style="
-    background-color: #111111;
-    color: #ffffffff;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 16px;
-    padding: 10px;
-    border-radius: 4px;
-    width: fit-content;
-    white-space: pre-line;
-">>> python -m venv venv
+
+   >> python -m venv venv
    >> source venv/Scripts/Activate
    >> pip install -r requirements.txt
-   </div>
+   
 
  **Observação:** Execute o codigo **a partir da raiz do projeto**, onde está localizado o arquivo `requirements.txt`
