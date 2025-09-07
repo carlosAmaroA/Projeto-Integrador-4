@@ -2,3 +2,4 @@ venv/
 .env
 data/raw/*
 !.gitkeep
+*.egg-info
