@@ -15,7 +15,7 @@
 - **Dataset URL:** [cBioPortal](https://www.cbioportal.org/study/summary?id=brca_tcga)
 - **Credit:** [The Cancer Genome Atlas Program](https://www.cancer.gov/ccg/research/genome-sequencing/tcga)
 
-## Breast Invasive Carcinoma (TCGA, Firehose Legacy) | brca_metabric
+## Breast Cancer (METABRIC, Nature 2012 & Nat Commun 2016) | brca_metabric
 - **License:** [ODbL](http://opendatacommons.org/licenses/odbl/1.0/)
 - **Dataset URL:** [cBioPortal](https://www.cbioportal.org/study/summary?id=brca_metabric)
 - **Credit:** [METABRIC Consortium](https://ega-archive.org/studies/EGAS00000000083)
