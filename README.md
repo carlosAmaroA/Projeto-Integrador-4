@@ -15,10 +15,10 @@ Este projeto utiliza dados genômicos e clínicos de câncer de mama para **dese
 ## Datasets
 | Nome | Fonte | Licença |
 |---------|-------|---------|
-| Breast Cancer (MSK, Cancer Cell 2018) | cBioPortal | Custom / sob registro |
-| Metastatic Breast Cancer (MSK, Cancer Discovery 2022) | cBioPortal | CC BY-NC-ND 4.0 |
-| Breast Invasive Carcinoma (TCGA, Firehose Legacy) | cBioPortal | CC BY-NC-ND 4.0 |
-| Breast Cancer (METABRIC, Nature 2012 & Nat Commun 2016) | cBioPortal | TCGA Data Use Policy |
+| Breast Cancer (MSK, Cancer Cell 2018) | cBioPortal | ODbL |
+| Metastatic Breast Cancer (MSK, Cancer Discovery 2022) | cBioPortal | ODbL |
+| Breast Invasive Carcinoma (TCGA, Firehose Legacy) | cBioPortal | TCGA Data Usage Policy |
+| Breast Cancer (METABRIC, Nature 2012 & Nat Commun 2016) | cBioPortal | ODbL |
 | MSK-CHORD (MSK, Nature 2024) | cBioPortal | Creative Commons |
 
 > **Nota:** Todos os datasets são usados em conformidade com suas licenças. Mais detalhes em DATA_LICENSES.
