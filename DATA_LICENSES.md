@@ -19,8 +19,3 @@
 - **License:** [ODbL](http://opendatacommons.org/licenses/odbl/1.0/)
 - **Dataset URL:** [cBioPortal](https://www.cbioportal.org/study/summary?id=brca_metabric)
 - **Credit:** [METABRIC Consortium](https://ega-archive.org/studies/EGAS00000000083)
-
-## MSK-CHORD (MSK, Nature 2024) | msk_chord_2024
-- **License:** [Creative Commons](https://creativecommons.org/licenses/by-nc-nd/4.0/)
-- **Dataset URL:** [cBioPortal](https://www.cbioportal.org/study/summary?id=msk_chord_2024)
-- **Credit:** [Memorial Sloan Kettering Cancer Center (MSKCC)](https://www.mskcc.org/cancer-conditions/breast-cancer/treatment)

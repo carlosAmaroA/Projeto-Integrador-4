@@ -19,7 +19,6 @@ Este projeto utiliza dados genômicos e clínicos de câncer de mama para **dese
 | Metastatic Breast Cancer (MSK, Cancer Discovery 2022) | cBioPortal | ODbL |
 | Breast Invasive Carcinoma (TCGA, Firehose Legacy) | cBioPortal | TCGA Data Usage Policy |
 | Breast Cancer (METABRIC, Nature 2012 & Nat Commun 2016) | cBioPortal | ODbL |
-| MSK-CHORD (MSK, Nature 2024) | cBioPortal | Creative Commons |
 
 > **Nota:** Todos os datasets são usados em conformidade com suas licenças. Mais detalhes em DATA_LICENSES.
 
