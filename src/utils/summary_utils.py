@@ -46,7 +46,7 @@ def col_summary(dataset,name = ''):
     
     def update(change=None):
         with outputs[0]:
-            clear_output()
+            outputs[0].clear_output()
             if dropdowns[0].value != 'Empty':
                 column = dataset.loc[:,dropdowns[0].value]
                 cv = column.std()/column.mean() if column.mean() !=0 else 'Mean = 0'
@@ -61,7 +61,7 @@ def col_summary(dataset,name = ''):
                 display(Markdown(f"**Missing:** {column.isna().sum()}"))
                 display(Markdown(f"**Total:** {len(column)}"))
         with outputs[1]:
-            clear_output()
+            outputs[1].clear_output()
             if dropdowns[1].value != 'Empty':
                 column = dataset.loc[:,dropdowns[1].value]
                 cv = column.std()/column.mean() if column.mean() !=0 else 'Mean = 0'
@@ -75,7 +75,7 @@ def col_summary(dataset,name = ''):
                 display(Markdown(f"**Missing:** {column.isna().sum()}"))
                 display(Markdown(f"**Total:** {len(column)}"))
         with outputs[2]:
-            clear_output()
+            outputs[2].clear_output()
             if dropdowns[2].value != 'Empty':
                 column = dataset.loc[:,dropdowns[2].value]
                 factors = column.unique()
@@ -90,7 +90,7 @@ def col_summary(dataset,name = ''):
                 display(Markdown(f"**Missing:** {column.isna().sum()}"))
                 display(Markdown(f"**Total:** {len(column)}"))
         with outputs[3]:
-            clear_output()
+            outputs[3].clear_output()
             if dropdowns[3].value != 'Empty':
                 column = dataset.loc[:,dropdowns[3].value]
                 display(Markdown(f"**Not Missing:** {column.count()}"))
