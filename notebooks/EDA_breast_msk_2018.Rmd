@@ -1,0 +1,215 @@
+---
+title: 'Analise Exploratoria Dados Básica e Seleção de Features: breast_msk_2018'
+output:
+  html_document:
+    df_print: paged
+  output:
+    html_document:
+      code_folding: hide
+  pdf_document: default
+---
+
+```{r, include=FALSE}
+library(readr) 
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(table1)
+library(plotly)
+library(caret)
+library(FSelector)
+```
+
+```{r, include=FALSE}
+dir_path <- file.path("..","data","raw","breast_msk_2018")
+data_clinical_patient = read_tsv(file.path(dir_path,"data_clinical_patient.txt"),comment='#')
+data_clinical_sample = read_tsv(file.path(dir_path,"data_clinical_sample.txt"),comment='#')
+data_cna = read_tsv(file.path(dir_path,"data_cna.txt"))
+data_cna_hg19 = read_tsv(file.path(dir_path,"data_cna_hg19.seg"))
+data_mutations = read_tsv(file.path(dir_path,"data_mutations.txt"))
+```
+### Estrutura geral do Conjunto de Dados
+
+- **data_clinical_patient.txt**
+  - Contém informações clinicas por paciente
+  - Amostra do dataset:
+```{r, echo=FALSE}
+head(data_clinical_patient)
+```
+- **data_clinical_sample.txt**
+  - Contém informações clínicas por amostra.
+  - Amostra do dataset:
+```{r,echo=FALSE}
+head(data_clinical_sample)
+```
+- **data_cna.txt**
+  - Indica se os genes estão amplificados, deletados ou neutros.
+  - CNA(Copy Number Alteration)
+  - Amostra do dataset:
+```{r,echo=FALSE}
+head(data_cna)
+```
+- **data_cna_hg19.seg**
+  - Segmentos de CNA mapeados no genoma hg19.
+  - Amostra do dataset:
+```{r,echo=FALSE}
+head(data_cna_hg19)
+```
+- **data_mutations.txt**
+  - Registro das alterações genéticas individuais detectadas em cada amostra de tumor.
+```{r,echo=FALSE}
+head(data_mutations)
+```
+
+### Estatísticas descritivas básicas
+
+::: columns 
+::: column
+#### Dados clinicos importantes(Pacientes)
+```{r, echo=FALSE}
+table1(~ +TIME_TO_DEATH_MONTHS+
+         METASTATIC_RECURRENCE_TIME_MONTHS+
+         LAST_CONTACT_DAYS_TO+
+         PRIOR_LOCAL_RECURRENCE+
+         DFS_MONTHS+
+         SEX+DFS_EVENT+OS_STATUS+
+         VITAL_STATUS+
+         MENOPAUSAL_STATUS_AT_DIAGNOSIS
+,data=data_clinical_patient)
+```
+:::
+::: column
+#### Dados clinicos importantes(Amostras)
+```{r, echo=FALSE}
+table1(~ +INVASIVE_CARCINOMA_DX_TIME+
+         INVASIVE_CARCINOMA_DX_AGE+
+         SAMPLE_TYPE+
+         STAGE_AT_DIAGNOSIS+
+         ER_STATUS+
+         PR_STATUS+
+         HR_STATUS
+
+,data=data_clinical_sample)
+```
+
+:::
+:::
+
+### Visualização dos Dados
+
+:::columns
+:::column
+```{r, fig.width=4, fig.height=4,echo=FALSE}
+genes = data_mutations %>% 
+  mutate(PATIENT_ID=substr(Tumor_Sample_Barcode,1,9)) %>%
+  select(PATIENT_ID,Hugo_Symbol) %>%
+  group_by(Hugo_Symbol) %>%
+  count() %>%
+  arrange(desc(n))
+ggplotly(
+  ggplot(data = head(genes,25),aes(x=n,y=reorder(Hugo_Symbol,n)))+
+    geom_bar(stat="identity",fill="skyblue")+
+    labs(title="Genes mutados que mais aparecem em pacientes",x="Mutations",y="Simbolo do Gene")+
+    theme_minimal()
+) %>% config(
+  displayModeBar = FALSE
+)
+```
+:::
+::: column
+```{r, fig.width=4, fig.height=4,echo=FALSE}
+ggplotly(
+  ggplot(data_clinical_sample,aes(x=INVASIVE_CARCINOMA_DX_AGE))+
+    geom_histogram(bins=22,fill="skyblue")+
+    theme_minimal()
+) %>% config(displayModeBar=FALSE)
+```
+:::
+:::
+::: columns
+::: column
+```{r, fig.width=4, fig.height=4,echo=FALSE}
+ggplotly(
+  ggplot(data_clinical_patient,aes(x=OS_STATUS, y=DFS_MONTHS))+
+    geom_violin(trim=FALSE,fill="skyblue")+
+    labs(x="Vital Status",y="Recurrence or Death")+
+    theme_minimal()
+) %>% config(displayModeBar=FALSE)
+```
+:::
+::: column
+```{r, fig.width=4, fig.height=4,echo=FALSE}
+ggplotly(
+  ggplot(data_clinical_patient,aes(x=MENOPAUSAL_STATUS_AT_DIAGNOSIS,y=DFS_MONTHS))+
+    geom_violin(trim=FALSE,fill="skyblue")+
+    theme_minimal()
+) %>% config(displayModeBar = FALSE)
+```
+:::
+:::
+### Seleção de Features
+
+```{r}
+#Remove features com variaçao proximas a zero
+nzv <- nearZeroVar(data_clinical_patient, saveMetrics = TRUE)
+numeric_data <- data_clinical_patient[, nzv$nzv == FALSE]
+```
+
+As colunas **SEX** e **PRIOR_LOCAL_RECURRENCE** tem variação muito baixa então, neste conjunto de dados não apresentam utilidade para o treinamento do modelo.
+Abaixo, deixei uma lista dos pesos das **features** obtida usando FSelector:
+```{r}
+#Remove features com variaçao proximas a zero
+weights <- information.gain(DFS_EVENT ~ ., data_clinical_patient) %>% arrange(desc(attr_importance))
+weights
+```
+
+```{r}
+mutations_dfse = data_mutations %>%
+  mutate(PATIENT_ID=substr(Tumor_Sample_Barcode,1,9)) %>%
+  select(PATIENT_ID,Hugo_Symbol) %>%
+  group_by(PATIENT_ID) %>%
+  summarize(mutations=n()) %>%
+  left_join(data_clinical_patient %>% select(PATIENT_ID,DFS_EVENT),by="PATIENT_ID") %>%
+  group_by(mutations) %>% summarise(dfs_rate=sum(DFS_EVENT)/n(),sample=n()) %>%
+  filter(sample>20)
+
+corr = round(cor(mutations_dfse$mutations,mutations_dfse$dfs_rate),2)
+ggplotly(
+  ggplot(mutations_dfse,aes(x=mutations,y=dfs_rate))+
+    geom_point()+
+    geom_smooth(method="lm")+
+    labs(title = paste("Pearson:",corr))
+)
+```
+
+O número total de mutações por paciente pode ser considerado uma feature relevante, pois apresenta alta correlação com o desfecho (DFS_EVENT).
+
+No gráfico apresentado, foram incluídos apenas os valores de mutations que tinham mais de 20 amostras, garantindo que cada ponto representasse um número mínimo de pacientes e evitando valores muito esparsos que poderiam distorcer a visualização.
+
+Dessa forma, o gráfico permite analisar de maneira mais confiável a relação entre número de mutações e taxa de eventos de recorrência, destacando tendências gerais sem o impacto de valores isolados com pouca representatividade.
+
+
+```{r}
+aged = data_clinical_sample %>%
+  select(PATIENT_ID,INVASIVE_CARCINOMA_DX_AGE) %>%
+  left_join(data_clinical_patient %>% select(PATIENT_ID,DFS_EVENT)) %>%
+  group_by(INVASIVE_CARCINOMA_DX_AGE) %>% summarise(dfs_rate=sum(DFS_EVENT)/n(),sample=n()) %>%
+  filter(sample > 10)
+
+corr=round(cor(aged$INVASIVE_CARCINOMA_DX_AGE,aged$dfs_rate),2)
+
+ggplotly(
+  ggplot(aged,aes(x=INVASIVE_CARCINOMA_DX_AGE,y=dfs_rate))+
+    geom_point()+
+    geom_smooth(method="lm")+
+    labs(title=paste("Pearson: ",corr))
+)
+```
+
+O gráfico acima mostra que existe uma correlação moderada a forte (negativa) entre a idade ao diagnóstico e a recorrência (DFS_EVENT). Isso indica que, em geral, pacientes mais jovens tendem a apresentar maior taxa de recorrência.
+
+Dessa forma, a idade ao diagnóstico se apresenta como uma feature potencialmente relevante para modelos de previsão de recorrência, pois fornece uma informação clínica importante sobre o risco do paciente.
+
+O uso dos genes como features pode ser facilmente obtido a partir do data_cna. O objetivo é utilizar tanto os genes quanto as variáveis clínicas previamente selecionadas como features.
+
+Os genes podem ser usados em modelos separados, ou, dependendo da abordagem, podem ser combinados com as variáveis clínicas em um único modelo, permitindo avaliar o impacto conjunto de alterações genômicas e características clínicas na previsão de recorrência.
